@@ -1,5 +1,6 @@
 import customtkinter as ck
 from threading import Thread
+from tkinter import filedialog
 import yt_dlp
 
 
@@ -29,12 +30,19 @@ def task_download():
 
         return
 
-    opts = {"format": "best", "quiet": True}
+    folder = path_var.get()
+    if folder:
+        opts = {
+            "format": "best",
+            "quiet": True,
+            "outtmpl": f"{folder}/%(title)s.%(ext)s",
+        }
+    else:
+        opts = {"format": "best", "quiet": True}
 
     try:
         with yt_dlp.YoutubeDL(opts) as dl:
             dl.download([url])
-            app.after(0, to_clear())
             app.after(
                 0,
                 d_btn.configure,
@@ -45,7 +53,7 @@ def task_download():
                 state="normal",
             )
             norm_btn()
-    except yt_dlp.utils.DownloadError as e:
+    except yt_dlp.utils.DownloadError:
         app.after(
             0,
             d_btn.configure,
@@ -58,6 +66,12 @@ def task_download():
         norm_btn()
 
 
+def select_path():
+    path_name = filedialog.askdirectory()
+    if path_name:
+        path_var.set(path_name)
+
+
 def norm_btn():
     app.after(
         2000,
@@ -68,6 +82,7 @@ def norm_btn():
         hover_color="#1A58DD",
         state="normal",
     )
+    app.after(2000, to_clear)
 
 
 def download():
@@ -79,9 +94,10 @@ def to_clear():
 
 
 app = ck.CTk()
-
 app.title("PyDload v1.0")
 app.geometry("500x350")
+
+path_var = ck.StringVar()
 
 main = ck.CTkFrame(app, fg_color="transparent")
 main.pack(expand=True)
@@ -107,5 +123,22 @@ d_btn = ck.CTkButton(
     cursor="hand2",
 )
 d_btn.pack(padx=10, pady=20)
+
+path_label = ck.CTkLabel(
+    main, textvariable=path_var, font=("Roboto", 10), wraplength=400
+)
+path_label.pack(padx=10, pady=(5, 0))
+path_btn = ck.CTkButton(
+    main,
+    text="Select Path",
+    command=select_path,
+    width=100,
+    height=20,
+    fg_color="#2E75E7",
+    hover_color="#1A58DD",
+    text_color="#FFFFFF",
+    cursor="hand2",
+)
+path_btn.pack(padx=5)
 
 app.mainloop()
