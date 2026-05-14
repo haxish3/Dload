@@ -34,6 +34,7 @@ def task_download():
     try:
         with yt_dlp.YoutubeDL(opts) as dl:
             dl.download([url])
+            app.after(0, to_clear())
             app.after(
                 0,
                 d_btn.configure,
@@ -57,10 +58,6 @@ def task_download():
         norm_btn()
 
 
-def download():
-    Thread(target=task_download).start()
-
-
 def norm_btn():
     app.after(
         2000,
@@ -71,6 +68,14 @@ def norm_btn():
         hover_color="#1A58DD",
         state="normal",
     )
+
+
+def download():
+    Thread(target=task_download).start()
+
+
+def to_clear():
+    entry.delete(0, "end")
 
 
 app = ck.CTk()
