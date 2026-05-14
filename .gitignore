@@ -1,3 +1,6 @@
 .venv
 __pycache__/
 *.pyc
+envi.txt
+*.mp4
+*.mp3
