@@ -20,7 +20,7 @@ while True:
     try:
         Thread(target=download, args=(url, ydl_opts)).start()
         print("Cole outra url se quiser!")
-        
+
     except yt_dlp.utils.DownloadError:
         print(f"'{url}' nao e uma url valida")
         retry = True
